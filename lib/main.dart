@@ -1,121 +1,248 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Meta Search',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MainHolder(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class MainHolder extends StatefulWidget {
+  const MainHolder({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<StatefulWidget> createState() => _MainHolderState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _MainHolderState extends State<MainHolder> {
+  int _selectedIndex = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  final List<Widget> _screens = [
+    const ImageAnalysisScreen(),
+    const GraphWebView(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(index: _selectedIndex, children: _screens),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.auto_graph_rounded),
+            label: '탐색',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class GraphWebView extends StatefulWidget {
+  const GraphWebView({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _GraphWebViewState();
+}
+
+class _GraphWebViewState extends State<GraphWebView> {
+  late final WebViewController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    const String dbName = "dbaaa09461171041d78bf160281d6313e0";
+    final String url = "${dotenv.get('BASE_WEB_VIEW_URL')}/graph/$dbName";
+
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(Colors.white)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onWebResourceError: (WebResourceError error) {
+            print("Web Resource Error: ${error.description}");
+          },
+        ),
+      )
+      ..addJavaScriptChannel(
+        'Android',
+        onMessageReceived: (JavaScriptMessage message) {
+          print("PhotoName: ${message.message}");
+        },
+      )
+      ..loadRequest(Uri.parse(url));
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('탐색'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => _controller.reload(),
+          ),
+        ],
       ),
+      body: WebViewWidget(controller: _controller),
+    );
+  }
+}
+
+class ImageAnalysisScreen extends StatefulWidget {
+  const ImageAnalysisScreen({super.key});
+
+  @override
+  State<ImageAnalysisScreen> createState() => _ImageAnalysisScreenState();
+}
+
+class _ImageAnalysisScreenState extends State<ImageAnalysisScreen> {
+  File? _image;
+  bool _isAnalyzing = false;
+
+  final webDio = Dio(
+    BaseOptions(baseUrl: '${dotenv.get('BASE_WEB_SERVER_URL')}/'),
+  );
+  final aiDio = Dio(
+    BaseOptions(baseUrl: '${dotenv.get('BASE_AI_SERVER_URL')}/'),
+  );
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+      _requestAnalysis();
+    }
+  }
+
+  Future<void> _requestAnalysis() async {
+    if (_image == null) return;
+
+    setState(() => _isAnalyzing = true);
+
+    try {
+      String fileName = _image!.path.split('/').last;
+      String dbName = "dbaaa09461171041d78bf160281d6313e0";
+
+      final webFormData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(_image!.path, filename: fileName),
+      });
+
+      final aiFormData = FormData.fromMap({
+        'addImage': await MultipartFile.fromFile(
+          _image!.path,
+          filename: fileName,
+        ),
+        'dbName': dbName,
+      });
+
+      await Future.wait([
+        webDio.post(
+          'android/uploadimg',
+          data: webFormData,
+          queryParameters: {'dbName': dbName},
+        ),
+
+        aiDio.post('android/upload_add', data: aiFormData),
+      ]);
+
+      _handleAnalysisFinish(dbName);
+    } catch (e) {
+      print("Failed: $e");
+      if (e is DioException) {
+        print("Error: ${e.response?.data}");
+      }
+    } finally {
+      setState(() => _isAnalyzing = false);
+    }
+  }
+
+  Future<void> _handleAnalysisFinish(String dbName) async {
+    try {
+      final finishData = FormData.fromMap({
+        'finish': 'true',
+        'dbName': dbName,
+        'rowCount': '1',
+      });
+
+      final response = await aiDio.post(
+        'android/upload_finish',
+        data: finishData,
+      );
+
+      if (response.data != null && response.data['images'] != null) {
+        List images = response.data['images'];
+
+        for (var person in images) {
+          if (person['isFaceExit'] == true && person['imageBytes'] != null) {
+            String imageName = person['imageName'];
+            String base64String = person['imageBytes'];
+
+            final decodedBytes = base64Decode(base64String);
+          }
+        }
+      }
+    } catch (e) {
+      print("Finish Error: $e");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('홈')),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            _image != null
+                ? Image.file(_image!, height: 300)
+                : const Text('이미지를 선택해주세요.'),
+
+            const SizedBox(height: 20),
+
+            _isAnalyzing
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: _pickImage,
+                    child: const Text('갤러리에서 사진 고르기'),
+                  ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
