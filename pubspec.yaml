@@ -36,7 +36,7 @@ dependencies:
     path: packages/domain
   presentation:
     path: packages/presentation
-  get_it: ^7.7.0
+  get_it: ^9.2.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
