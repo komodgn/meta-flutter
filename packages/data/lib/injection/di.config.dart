@@ -9,6 +9,10 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:data/datasources/local/app_database.dart' as _i353;
+import 'package:data/datasources/local/daos/analyzed_image_dao.dart' as _i589;
+import 'package:data/datasources/local/daos/person_dao.dart' as _i504;
+import 'package:data/injection/database_module.dart' as _i1021;
 import 'package:data/injection/service_module.dart' as _i606;
 import 'package:data/repositories/gallery_repository_impl.dart' as _i37;
 import 'package:data/repositories/graph_reponsitory_impl.dart' as _i221;
@@ -34,12 +38,11 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    final databaseModule = _$DatabaseModule();
     final serviceModule = _$ServiceModule();
+    gh.lazySingleton<_i353.AppDatabase>(() => databaseModule.appDatabase);
     gh.lazySingleton<_i361.Dio>(() => serviceModule.dio);
     gh.lazySingleton<_i524.Neo4jRepository>(() => _i325.Neo4jRepositoryImpl());
-    gh.lazySingleton<_i234.PersonRepository>(
-      () => _i802.PersonRepositoryImpl(),
-    );
     gh.lazySingleton<_i448.AIService>(
       () => serviceModule.aiService(gh<_i361.Dio>()),
     );
@@ -49,8 +52,21 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i330.OpenAIService>(
       () => serviceModule.openAIService(gh<_i361.Dio>()),
     );
+    gh.lazySingleton<_i504.PersonDao>(
+      () => databaseModule.personDao(gh<_i353.AppDatabase>()),
+    );
+    gh.lazySingleton<_i589.AnalyzedImageDao>(
+      () => databaseModule.analyzedImageDao(gh<_i353.AppDatabase>()),
+    );
     gh.lazySingleton<_i959.GalleryRepository>(
       () => _i37.GalleryRepositoryImpl(),
+    );
+    gh.lazySingleton<_i234.PersonRepository>(
+      () => _i802.PersonRepositoryImpl(
+        gh<_i504.PersonDao>(),
+        gh<_i448.AIService>(),
+        gh<_i1015.WebService>(),
+      ),
     );
     gh.factory<_i508.SearchRepository>(
       () => _i14.SearchRepositoryImpl(
@@ -67,5 +83,7 @@ extension GetItInjectableX on _i174.GetIt {
     return this;
   }
 }
+
+class _$DatabaseModule extends _i1021.DatabaseModule {}
 
 class _$ServiceModule extends _i606.ServiceModule {}
