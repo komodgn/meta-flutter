@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:data/mappers/search_mapper.dart';
 import 'package:data/models/request/detected_objects_request.dart';
 import 'package:data/models/request/nl_search_request.dart';
 import 'package:data/models/request/open_ai_request.dart';
@@ -70,7 +71,7 @@ class SearchRepositoryImpl implements SearchRepository {
       request: DetectedObjectsRequest(dbName: dbName, properties: properties),
     );
 
-    return response.toEntity();
+    return response.toDomain();
   }
 
   @override
