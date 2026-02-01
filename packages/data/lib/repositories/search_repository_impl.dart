@@ -34,10 +34,20 @@ class SearchRepositoryImpl implements SearchRepository {
       filename: imageFile.path.split('/').last,
     );
 
+    final circleDtos = circles
+        .map(
+          (c) => CircleDto(
+            centerX: c.centerX,
+            centerY: c.centerY,
+            radius: c.radius,
+          ),
+        )
+        .toList();
+
     final response = await aiService.uploadImageAndCircles(
       image: multipartFile,
       dbName: dbName,
-      request: DragSearchRequest(circles: circles),
+      request: DragSearchRequest(circles: circleDtos),
     );
 
     return response.detectedObjects;

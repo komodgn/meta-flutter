@@ -11,7 +11,6 @@ part of 'circle.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$Circle {
 
@@ -22,8 +21,6 @@ mixin _$Circle {
 @pragma('vm:prefer-inline')
 $CircleCopyWith<Circle> get copyWith => _$CircleCopyWithImpl<Circle>(this as Circle, _$identity);
 
-  /// Serializes this Circle to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
@@ -31,7 +28,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is Circle&&(identical(other.centerX, centerX) || other.centerX == centerX)&&(identical(other.centerY, centerY) || other.centerY == centerY)&&(identical(other.radius, radius) || other.radius == radius));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,centerX,centerY,radius);
 
@@ -208,11 +205,11 @@ return $default(_that.centerX,_that.centerY,_that.radius);case _:
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _Circle implements Circle {
   const _Circle({required this.centerX, required this.centerY, required this.radius});
-  factory _Circle.fromJson(Map<String, dynamic> json) => _$CircleFromJson(json);
+  
 
 @override final  double centerX;
 @override final  double centerY;
@@ -224,17 +221,14 @@ class _Circle implements Circle {
 @pragma('vm:prefer-inline')
 _$CircleCopyWith<_Circle> get copyWith => __$CircleCopyWithImpl<_Circle>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$CircleToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _Circle&&(identical(other.centerX, centerX) || other.centerX == centerX)&&(identical(other.centerY, centerY) || other.centerY == centerY)&&(identical(other.radius, radius) || other.radius == radius));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,centerX,centerY,radius);
 
