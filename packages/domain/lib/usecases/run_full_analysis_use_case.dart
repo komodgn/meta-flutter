@@ -21,26 +21,24 @@ class RunFullAnalysisUseCase {
   // Entry point
   Future<void> execute() async {
     // Fetch initial data required for syschronization
-    final currentUris = await galleryRepository.getAllGalleryImages();
-    final alreadyPaths = await imageAnalysisRepository
-        .getAlreadyAnalyzedPaths();
+    final galleryImages = await galleryRepository.getAllGalleryImages();
+    final currentIds = galleryImages.map((e) => e.id).toList();
+    final alreadyIds = await imageAnalysisRepository.getAlreadyAnalyzedIds();
     final dbName = await neo4jRepository.getDatabaseName();
 
     // Remove images that no longer exist in the local gallery
     await _deleteMissingImages(
       dbName: dbName,
-      alreadyPaths: alreadyPaths,
-      currentPaths: currentUris,
+      alreadyIds: alreadyIds,
+      currentIds: currentIds,
     );
 
     // Identify new images to be uploaded
-    final addUris = currentUris
-        .where((uri) => !alreadyPaths.contains(uri))
-        .toList();
+    final addIds = currentIds.where((id) => !alreadyIds.contains(id)).toList();
 
     // Upload and process the identified new images
-    if (addUris.isNotEmpty) {
-      await _uploadAndProcessImages(addUris: addUris, dbName: dbName);
+    if (addIds.isNotEmpty) {
+      await _uploadAndProcessImages(addIds: addIds, dbName: dbName);
     }
 
     // Sync any naming mismatches between local and server
@@ -50,18 +48,18 @@ class RunFullAnalysisUseCase {
   // Removes metadata and server-side data for images no longer present in the gallery
   Future<void> _deleteMissingImages({
     required String dbName,
-    required List<String> alreadyPaths,
-    required List<String> currentPaths,
+    required List<String> alreadyIds,
+    required List<String> currentIds,
   }) async {
-    final deletePaths = alreadyPaths
-        .where((path) => !currentPaths.contains(path))
+    final deleteIds = alreadyIds
+        .where((path) => !currentIds.contains(path))
         .toList();
 
-    for (var i = 0; i < deletePaths.length; i++) {
-      final pathString = deletePaths[i];
+    for (var i = 0; i < deleteIds.length; i++) {
+      final id = deleteIds[i];
 
-      final savedFileName = await imageAnalysisRepository.getFileNameByPath(
-        path: pathString,
+      final savedFileName = await imageAnalysisRepository.getFileNameById(
+        id: id,
       );
       final fileName = savedFileName ?? "unknown.jpg";
 
@@ -73,55 +71,58 @@ class RunFullAnalysisUseCase {
 
       if (isSuccess) {
         // Remove from local tracking database upon success
-        await imageAnalysisRepository.deleteAnalyzedPath(path: pathString);
+        await imageAnalysisRepository.deleteAnalyzedId(id: id);
       }
     }
   }
 
   // Upload images in chunks and triggers the analysis finish process
   Future<void> _uploadAndProcessImages({
-    required List<String> addUris,
+    required List<String> addIds,
     required String dbName,
   }) async {
     const chunkSize = 10;
 
-    for (var i = 0; i < addUris.length; i += chunkSize) {
-      final end = (i + chunkSize < addUris.length)
+    for (var i = 0; i < addIds.length; i += chunkSize) {
+      final end = (i + chunkSize < addIds.length)
           ? i + chunkSize
-          : addUris.length;
-      final chunk = addUris.sublist(i, end);
+          : addIds.length;
+      final chunk = addIds.sublist(i, end);
 
       // Upload images within a chunk in parallel
       final results = await Future.wait(
-        chunk.map((uri) async {
-          final fileName = await galleryRepository.getFileName(uri: uri);
+        chunk.map((id) async {
+          final fileName = await galleryRepository.getFileName(id: id);
           if (fileName == null) return null;
+
+          final bytes = await galleryRepository.getImageBytesById(id);
+          if (bytes == null) return null;
 
           final isSuccess = await imageAnalysisRepository.uploadSingleImage(
             dbName: dbName,
-            path: uri,
+            bytes: bytes,
             fileName: fileName,
           );
 
-          return isSuccess ? (path: uri, fileName: fileName) : null;
+          return isSuccess ? (id: id, fileName: fileName) : null;
         }),
       );
 
       // Filter successfully uploaded images for final processing
       final successfulData = results
-          .whereType<({String path, String fileName})>()
+          .whereType<({String id, String fileName})>()
           .toList();
 
       if (successfulData.isNotEmpty) {
-        await _processAnalysisFinish(successfulData, dbName);
+        await _processAnalysisFinish(dbName, successfulData);
       }
     }
   }
 
   // Finalizes analysis for a chunk and persists discovered person/face data
   Future<void> _processAnalysisFinish(
-    List<({String path, String fileName})> successfulData,
     String dbName,
+    List<({String id, String fileName})> successfulData,
   ) async {
     // Get the sequence index for new person identification
     final lastIndex = await imageAnalysisRepository
@@ -166,7 +167,7 @@ class RunFullAnalysisUseCase {
 
     // Mark these gallery paths as 'analyzed' in the local database
     if (successfulData.isNotEmpty) {
-      await imageAnalysisRepository.saveAnalyzedPath(successfulData);
+      await imageAnalysisRepository.saveAnalyzedId(successfulData);
     }
   }
 
