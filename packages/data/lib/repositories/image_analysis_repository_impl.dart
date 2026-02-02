@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:data/datasources/local/app_database.dart';
 import 'package:data/datasources/local/prefs/analysis_metadata_storage.dart';
 import 'package:data/mappers/analysis_mapper.dart';
@@ -26,29 +26,29 @@ class ImageAnalysisRepositoryImpl implements ImageAnalysisRepository {
   });
 
   @override
-  Future<List<String>> getAlreadyAnalyzedPaths() async {
-    return await analyzedImageDao.getAllAnalyzedPaths();
+  Future<List<String>> getAlreadyAnalyzedIds() async {
+    return await analyzedImageDao.getAllAnalyzedIds();
   }
 
   @override
-  Future<String?> getFileNameByPath({required String path}) async {
-    return await analyzedImageDao.getFileNameByPath(path);
+  Future<String?> getFileNameById({required String id}) async {
+    return await analyzedImageDao.getFileNameById(id);
   }
 
   @override
   Future<bool> uploadSingleImage({
     required String dbName,
-    required String path,
+    required Uint8List bytes,
     required String fileName,
   }) async {
     try {
-      final file = File(path);
-      final multipartFile = await MultipartFile.fromFile(
-        file.path,
-        filename: fileName,
-      );
+      final multipartFile = MultipartFile.fromBytes(bytes, filename: fileName);
 
-      await aiService.uploadAddImage(dbName: dbName, fileName: multipartFile);
+      await Future.wait([
+        aiService.uploadImage(dbName: dbName, image: multipartFile),
+        webService.uploadImage(dbName: dbName, image: multipartFile),
+      ]);
+
       return true;
     } catch (e) {
       return false;
@@ -76,13 +76,16 @@ class ImageAnalysisRepositoryImpl implements ImageAnalysisRepository {
     try {
       final multipartFileName = MultipartFile.fromBytes([], filename: fileName);
 
-      await aiService.uploadDeleteImage(
-        dbName: dbName,
-        fileName: multipartFileName,
-      );
-      await webService.uploadWebDeleteImage(
-        request: DeleteImageRequest(dbName: dbName, deleteImage: fileName),
-      );
+      await Future.wait([
+        aiService.uploadDeleteImage(
+          dbName: dbName,
+          fileName: multipartFileName,
+        ),
+        webService.uploadWebDeleteImage(
+          request: DeleteImageRequest(dbName: dbName, deleteImage: fileName),
+        ),
+      ]);
+
       return true;
     } catch (e) {
       return false;
@@ -90,22 +93,22 @@ class ImageAnalysisRepositoryImpl implements ImageAnalysisRepository {
   }
 
   @override
-  Future<void> saveAnalyzedPath(
-    List<({String path, String fileName})> images,
+  Future<void> saveAnalyzedId(
+    List<({String id, String fileName})> images,
   ) async {
     final entities = images.map((image) {
       return AnalyzedImagesCompanion.insert(
-        imagePath: image.path,
+        imageId: image.id,
         fileName: image.fileName,
       );
     }).toList();
 
-    await analyzedImageDao.insertAllPaths(entities);
+    await analyzedImageDao.insertAllAnalyzedImages(entities);
   }
 
   @override
-  Future<void> deleteAnalyzedPath({required String path}) async {
-    await analyzedImageDao.deletePath(path);
+  Future<void> deleteAnalyzedId({required String id}) async {
+    await analyzedImageDao.deleteById(id);
   }
 
   @override

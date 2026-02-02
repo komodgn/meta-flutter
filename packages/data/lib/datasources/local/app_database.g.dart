@@ -754,16 +754,17 @@ class $AnalyzedImagesTable extends AnalyzedImages
       'PRIMARY KEY AUTOINCREMENT',
     ),
   );
-  static const VerificationMeta _imagePathMeta = const VerificationMeta(
-    'imagePath',
+  static const VerificationMeta _imageIdMeta = const VerificationMeta(
+    'imageId',
   );
   @override
-  late final GeneratedColumn<String> imagePath = GeneratedColumn<String>(
-    'image_path',
+  late final GeneratedColumn<String> imageId = GeneratedColumn<String>(
+    'image_id',
     aliasedName,
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
   );
   static const VerificationMeta _fileNameMeta = const VerificationMeta(
     'fileName',
@@ -777,7 +778,7 @@ class $AnalyzedImagesTable extends AnalyzedImages
     requiredDuringInsert: true,
   );
   @override
-  List<GeneratedColumn> get $columns => [id, imagePath, fileName];
+  List<GeneratedColumn> get $columns => [id, imageId, fileName];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -793,13 +794,13 @@ class $AnalyzedImagesTable extends AnalyzedImages
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('image_path')) {
+    if (data.containsKey('image_id')) {
       context.handle(
-        _imagePathMeta,
-        imagePath.isAcceptableOrUnknown(data['image_path']!, _imagePathMeta),
+        _imageIdMeta,
+        imageId.isAcceptableOrUnknown(data['image_id']!, _imageIdMeta),
       );
     } else if (isInserting) {
-      context.missing(_imagePathMeta);
+      context.missing(_imageIdMeta);
     }
     if (data.containsKey('file_name')) {
       context.handle(
@@ -822,9 +823,9 @@ class $AnalyzedImagesTable extends AnalyzedImages
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
-      imagePath: attachedDatabase.typeMapping.read(
+      imageId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}image_path'],
+        data['${effectivePrefix}image_id'],
       )!,
       fileName: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -842,18 +843,18 @@ class $AnalyzedImagesTable extends AnalyzedImages
 class AnalyzedImageEntity extends DataClass
     implements Insertable<AnalyzedImageEntity> {
   final int id;
-  final String imagePath;
+  final String imageId;
   final String fileName;
   const AnalyzedImageEntity({
     required this.id,
-    required this.imagePath,
+    required this.imageId,
     required this.fileName,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['image_path'] = Variable<String>(imagePath);
+    map['image_id'] = Variable<String>(imageId);
     map['file_name'] = Variable<String>(fileName);
     return map;
   }
@@ -861,7 +862,7 @@ class AnalyzedImageEntity extends DataClass
   AnalyzedImagesCompanion toCompanion(bool nullToAbsent) {
     return AnalyzedImagesCompanion(
       id: Value(id),
-      imagePath: Value(imagePath),
+      imageId: Value(imageId),
       fileName: Value(fileName),
     );
   }
@@ -873,7 +874,7 @@ class AnalyzedImageEntity extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return AnalyzedImageEntity(
       id: serializer.fromJson<int>(json['id']),
-      imagePath: serializer.fromJson<String>(json['imagePath']),
+      imageId: serializer.fromJson<String>(json['imageId']),
       fileName: serializer.fromJson<String>(json['fileName']),
     );
   }
@@ -882,24 +883,21 @@ class AnalyzedImageEntity extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'imagePath': serializer.toJson<String>(imagePath),
+      'imageId': serializer.toJson<String>(imageId),
       'fileName': serializer.toJson<String>(fileName),
     };
   }
 
-  AnalyzedImageEntity copyWith({
-    int? id,
-    String? imagePath,
-    String? fileName,
-  }) => AnalyzedImageEntity(
-    id: id ?? this.id,
-    imagePath: imagePath ?? this.imagePath,
-    fileName: fileName ?? this.fileName,
-  );
+  AnalyzedImageEntity copyWith({int? id, String? imageId, String? fileName}) =>
+      AnalyzedImageEntity(
+        id: id ?? this.id,
+        imageId: imageId ?? this.imageId,
+        fileName: fileName ?? this.fileName,
+      );
   AnalyzedImageEntity copyWithCompanion(AnalyzedImagesCompanion data) {
     return AnalyzedImageEntity(
       id: data.id.present ? data.id.value : this.id,
-      imagePath: data.imagePath.present ? data.imagePath.value : this.imagePath,
+      imageId: data.imageId.present ? data.imageId.value : this.imageId,
       fileName: data.fileName.present ? data.fileName.value : this.fileName,
     );
   }
@@ -908,58 +906,58 @@ class AnalyzedImageEntity extends DataClass
   String toString() {
     return (StringBuffer('AnalyzedImageEntity(')
           ..write('id: $id, ')
-          ..write('imagePath: $imagePath, ')
+          ..write('imageId: $imageId, ')
           ..write('fileName: $fileName')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, imagePath, fileName);
+  int get hashCode => Object.hash(id, imageId, fileName);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is AnalyzedImageEntity &&
           other.id == this.id &&
-          other.imagePath == this.imagePath &&
+          other.imageId == this.imageId &&
           other.fileName == this.fileName);
 }
 
 class AnalyzedImagesCompanion extends UpdateCompanion<AnalyzedImageEntity> {
   final Value<int> id;
-  final Value<String> imagePath;
+  final Value<String> imageId;
   final Value<String> fileName;
   const AnalyzedImagesCompanion({
     this.id = const Value.absent(),
-    this.imagePath = const Value.absent(),
+    this.imageId = const Value.absent(),
     this.fileName = const Value.absent(),
   });
   AnalyzedImagesCompanion.insert({
     this.id = const Value.absent(),
-    required String imagePath,
+    required String imageId,
     required String fileName,
-  }) : imagePath = Value(imagePath),
+  }) : imageId = Value(imageId),
        fileName = Value(fileName);
   static Insertable<AnalyzedImageEntity> custom({
     Expression<int>? id,
-    Expression<String>? imagePath,
+    Expression<String>? imageId,
     Expression<String>? fileName,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (imagePath != null) 'image_path': imagePath,
+      if (imageId != null) 'image_id': imageId,
       if (fileName != null) 'file_name': fileName,
     });
   }
 
   AnalyzedImagesCompanion copyWith({
     Value<int>? id,
-    Value<String>? imagePath,
+    Value<String>? imageId,
     Value<String>? fileName,
   }) {
     return AnalyzedImagesCompanion(
       id: id ?? this.id,
-      imagePath: imagePath ?? this.imagePath,
+      imageId: imageId ?? this.imageId,
       fileName: fileName ?? this.fileName,
     );
   }
@@ -970,8 +968,8 @@ class AnalyzedImagesCompanion extends UpdateCompanion<AnalyzedImageEntity> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (imagePath.present) {
-      map['image_path'] = Variable<String>(imagePath.value);
+    if (imageId.present) {
+      map['image_id'] = Variable<String>(imageId.value);
     }
     if (fileName.present) {
       map['file_name'] = Variable<String>(fileName.value);
@@ -983,7 +981,7 @@ class AnalyzedImagesCompanion extends UpdateCompanion<AnalyzedImageEntity> {
   String toString() {
     return (StringBuffer('AnalyzedImagesCompanion(')
           ..write('id: $id, ')
-          ..write('imagePath: $imagePath, ')
+          ..write('imageId: $imageId, ')
           ..write('fileName: $fileName')
           ..write(')'))
         .toString();
@@ -1632,13 +1630,13 @@ typedef $$FacesTableProcessedTableManager =
 typedef $$AnalyzedImagesTableCreateCompanionBuilder =
     AnalyzedImagesCompanion Function({
       Value<int> id,
-      required String imagePath,
+      required String imageId,
       required String fileName,
     });
 typedef $$AnalyzedImagesTableUpdateCompanionBuilder =
     AnalyzedImagesCompanion Function({
       Value<int> id,
-      Value<String> imagePath,
+      Value<String> imageId,
       Value<String> fileName,
     });
 
@@ -1656,8 +1654,8 @@ class $$AnalyzedImagesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get imagePath => $composableBuilder(
-    column: $table.imagePath,
+  ColumnFilters<String> get imageId => $composableBuilder(
+    column: $table.imageId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1681,8 +1679,8 @@ class $$AnalyzedImagesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get imagePath => $composableBuilder(
-    column: $table.imagePath,
+  ColumnOrderings<String> get imageId => $composableBuilder(
+    column: $table.imageId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -1704,8 +1702,8 @@ class $$AnalyzedImagesTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get imagePath =>
-      $composableBuilder(column: $table.imagePath, builder: (column) => column);
+  GeneratedColumn<String> get imageId =>
+      $composableBuilder(column: $table.imageId, builder: (column) => column);
 
   GeneratedColumn<String> get fileName =>
       $composableBuilder(column: $table.fileName, builder: (column) => column);
@@ -1749,21 +1747,21 @@ class $$AnalyzedImagesTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                Value<String> imagePath = const Value.absent(),
+                Value<String> imageId = const Value.absent(),
                 Value<String> fileName = const Value.absent(),
               }) => AnalyzedImagesCompanion(
                 id: id,
-                imagePath: imagePath,
+                imageId: imageId,
                 fileName: fileName,
               ),
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
-                required String imagePath,
+                required String imageId,
                 required String fileName,
               }) => AnalyzedImagesCompanion.insert(
                 id: id,
-                imagePath: imagePath,
+                imageId: imageId,
                 fileName: fileName,
               ),
           withReferenceMapper: (p0) => p0

@@ -9,11 +9,13 @@ class AnalyzedImageDao extends DatabaseAccessor<AppDatabase>
     with _$AnalyzedImageDaoMixin {
   AnalyzedImageDao(AppDatabase db) : super(db);
 
-  Future<int> insertPath(AnalyzedImagesCompanion entry) {
+  Future<int> insertAnalyzedImage(AnalyzedImagesCompanion entry) {
     return into(analyzedImages).insert(entry, mode: InsertMode.insertOrReplace);
   }
 
-  Future<void> insertAllPaths(List<AnalyzedImagesCompanion> entities) async {
+  Future<void> insertAllAnalyzedImages(
+    List<AnalyzedImagesCompanion> entities,
+  ) async {
     await batch((batch) {
       batch.insertAll(
         analyzedImages,
@@ -23,22 +25,20 @@ class AnalyzedImageDao extends DatabaseAccessor<AppDatabase>
     });
   }
 
-  Future<int> deletePath(String path) {
-    return (delete(
-      analyzedImages,
-    )..where((t) => t.imagePath.equals(path))).go();
+  Future<int> deleteById(String id) {
+    return (delete(analyzedImages)..where((t) => t.imageId.equals(id))).go();
   }
 
-  Future<List<String>> getAllAnalyzedPaths() async {
+  Future<List<String>> getAllAnalyzedIds() async {
     final query = selectOnly(analyzedImages)
-      ..addColumns([analyzedImages.imagePath]);
+      ..addColumns([analyzedImages.imageId]);
     final rows = await query.get();
-    return rows.map((row) => row.read(analyzedImages.imagePath)!).toList();
+    return rows.map((row) => row.read(analyzedImages.imageId)!).toList();
   }
 
-  Future<String?> getFileNameByPath(String path) async {
+  Future<String?> getFileNameById(String id) async {
     final query = select(analyzedImages)
-      ..where((t) => t.imagePath.equals(path))
+      ..where((t) => t.imageId.equals(id))
       ..limit(1);
     final row = await query.getSingleOrNull();
     return row?.fileName;
