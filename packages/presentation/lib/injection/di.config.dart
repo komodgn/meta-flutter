@@ -9,9 +9,11 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:domain/usecases/get_search_use_case.dart' as _i690;
+import 'package:domain/usecases/get_gallery_images_use_case.dart' as _i923;
+import 'package:domain/usecases/search/get_search_use_case.dart' as _i356;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:presentation/providers/gallery/gallery_provider.dart' as _i312;
 import 'package:presentation/providers/search/search_provider.dart' as _i183;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -21,9 +23,14 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    gh.factory<_i312.GalleryProvider>(
+      () => _i312.GalleryProvider(
+        getGalleryImagesUseCase: gh<_i923.GetGalleryImagesUseCase>(),
+      ),
+    );
     gh.factory<_i183.SearchProvider>(
       () =>
-          _i183.SearchProvider(getSearchUseCase: gh<_i690.GetSearchUseCase>()),
+          _i183.SearchProvider(getSearchUseCase: gh<_i356.GetSearchUseCase>()),
     );
     return this;
   }

@@ -14,6 +14,7 @@ import 'package:domain/repositories/image_analysis_repository.dart' as _i23;
 import 'package:domain/repositories/neo4j_repository.dart' as _i524;
 import 'package:domain/repositories/person_repository.dart' as _i234;
 import 'package:domain/repositories/search_repository.dart' as _i508;
+import 'package:domain/usecases/get_gallery_images_use_case.dart' as _i923;
 import 'package:domain/usecases/person/person_use_case.dart' as _i880;
 import 'package:domain/usecases/run_full_analysis_use_case.dart' as _i200;
 import 'package:domain/usecases/search/get_search_use_case.dart' as _i356;
@@ -34,6 +35,9 @@ extension GetItInjectableX on _i174.GetIt {
         personRepository: gh<_i234.PersonRepository>(),
         neo4jRepository: gh<_i524.Neo4jRepository>(),
       ),
+    );
+    gh.factory<_i923.GetGalleryImagesUseCase>(
+      () => _i923.GetGalleryImagesUseCase(gh<_i959.GalleryRepository>()),
     );
     gh.factory<_i356.GetSearchUseCase>(
       () => _i356.GetSearchUseCase(
