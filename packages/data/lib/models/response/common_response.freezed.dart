@@ -210,11 +210,11 @@ return $default(_that.message,_that.error);case _:
 @JsonSerializable()
 
 class _CommonResponse implements CommonResponse {
-  const _CommonResponse({required this.message, required this.error});
+  const _CommonResponse({this.message = null, this.error = null});
   factory _CommonResponse.fromJson(Map<String, dynamic> json) => _$CommonResponseFromJson(json);
 
-@override final  String? message;
-@override final  String? error;
+@override@JsonKey() final  String? message;
+@override@JsonKey() final  String? error;
 
 /// Create a copy of CommonResponse
 /// with the given fields replaced by the non-null parameter values.

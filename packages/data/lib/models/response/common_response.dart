@@ -6,8 +6,8 @@ part 'common_response.g.dart';
 @freezed
 abstract class CommonResponse with _$CommonResponse {
   const factory CommonResponse({
-    required String? message,
-    required String? error,
+    @Default(null) String? message,
+    @Default(null) String? error,
   }) = _CommonResponse;
 
   factory CommonResponse.fromJson(Map<String, dynamic> json) =>

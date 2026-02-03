@@ -8,8 +8,8 @@ part of 'common_response.dart';
 
 _CommonResponse _$CommonResponseFromJson(Map<String, dynamic> json) =>
     _CommonResponse(
-      message: json['message'] as String?,
-      error: json['error'] as String?,
+      message: json['message'] as String? ?? null,
+      error: json['error'] as String? ?? null,
     );
 
 Map<String, dynamic> _$CommonResponseToJson(_CommonResponse instance) =>
