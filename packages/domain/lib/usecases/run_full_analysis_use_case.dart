@@ -82,6 +82,7 @@ class RunFullAnalysisUseCase {
     required String dbName,
   }) async {
     const chunkSize = 10;
+    final allSuccessfulData = <({String id, String fileName})>[];
 
     for (var i = 0; i < addIds.length; i += chunkSize) {
       final end = (i + chunkSize < addIds.length)
@@ -112,10 +113,11 @@ class RunFullAnalysisUseCase {
       final successfulData = results
           .whereType<({String id, String fileName})>()
           .toList();
+      allSuccessfulData.addAll(successfulData);
+    }
 
-      if (successfulData.isNotEmpty) {
-        await _processAnalysisFinish(dbName, successfulData);
-      }
+    if (allSuccessfulData.isNotEmpty) {
+      await _processAnalysisFinish(dbName, allSuccessfulData);
     }
   }
 
