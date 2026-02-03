@@ -42,11 +42,15 @@ class ImageAnalysisRepositoryImpl implements ImageAnalysisRepository {
     required String fileName,
   }) async {
     try {
-      final multipartFile = MultipartFile.fromBytes(bytes, filename: fileName);
-
       await Future.wait([
-        aiService.uploadImage(dbName: dbName, image: multipartFile),
-        webService.uploadImage(dbName: dbName, image: multipartFile),
+        aiService.uploadImage(
+          dbName: dbName,
+          image: MultipartFile.fromBytes(bytes, filename: fileName),
+        ),
+        webService.uploadImage(
+          dbName: dbName,
+          image: MultipartFile.fromBytes(bytes, filename: fileName),
+        ),
       ]);
 
       return true;
@@ -63,6 +67,7 @@ class ImageAnalysisRepositoryImpl implements ImageAnalysisRepository {
     final response = await aiService.uploadFinish(
       dbName: dbName,
       rowCount: lastIndex.toString(),
+      finish: "true",
     );
 
     return response.toDomain(lastIndex);
