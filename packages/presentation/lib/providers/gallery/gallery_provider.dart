@@ -1,5 +1,6 @@
 import 'package:domain/entities/gallery_image.dart';
 import 'package:domain/usecases/get_gallery_images_use_case.dart';
+import 'package:domain/usecases/update_photo_permission_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -7,8 +8,12 @@ import 'package:photo_manager/photo_manager.dart';
 @injectable
 class GalleryProvider with ChangeNotifier {
   final GetGalleryImagesUseCase getGalleryImagesUseCase;
+  final UpdatePhotoPermissionUseCase updatePhotoPermissionUseCase;
 
-  GalleryProvider({required this.getGalleryImagesUseCase});
+  GalleryProvider({
+    required this.getGalleryImagesUseCase,
+    required this.updatePhotoPermissionUseCase,
+  });
 
   List<GalleryImage> _images = [];
   List<GalleryImage> get images => _images;
@@ -31,5 +36,10 @@ class GalleryProvider with ChangeNotifier {
         notifyListeners();
       }
     } else {}
+  }
+
+  Future<void> handleEditSelected() async {
+    await updatePhotoPermissionUseCase.execute();
+    await fetchImages();
   }
 }

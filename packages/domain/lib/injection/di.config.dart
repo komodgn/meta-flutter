@@ -18,6 +18,7 @@ import 'package:domain/usecases/get_gallery_images_use_case.dart' as _i923;
 import 'package:domain/usecases/person/person_use_case.dart' as _i880;
 import 'package:domain/usecases/run_full_analysis_use_case.dart' as _i200;
 import 'package:domain/usecases/search/get_search_use_case.dart' as _i356;
+import 'package:domain/usecases/update_photo_permission_use_case.dart' as _i802;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -49,6 +50,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i880.PersonUseCase>(
       () => _i880.PersonUseCase(gh<_i234.PersonRepository>()),
+    );
+    gh.factory<_i802.UpdatePhotoPermissionUseCase>(
+      () => _i802.UpdatePhotoPermissionUseCase(
+        galleryRepository: gh<_i959.GalleryRepository>(),
+      ),
     );
     return this;
   }
