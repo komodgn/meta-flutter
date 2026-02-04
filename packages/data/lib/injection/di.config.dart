@@ -17,6 +17,7 @@ import 'package:data/datasources/local/prefs/analysis_metadata_storage.dart'
 import 'package:data/datasources/local/prefs/neo4j_config_storage.dart'
     as _i318;
 import 'package:data/injection/database_module.dart' as _i1021;
+import 'package:data/injection/datasource_module.dart' as _i560;
 import 'package:data/injection/service_module.dart' as _i606;
 import 'package:data/repositories/gallery_repository_impl.dart' as _i37;
 import 'package:data/repositories/graph_reponsitory_impl.dart' as _i221;
@@ -41,13 +42,18 @@ import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
-  _i174.GetIt init({
+  Future<_i174.GetIt> init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
-  }) {
+  }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    final dataSourceModule = _$DataSourceModule();
     final databaseModule = _$DatabaseModule();
     final serviceModule = _$ServiceModule();
+    await gh.factoryAsync<_i460.SharedPreferences>(
+      () => dataSourceModule.prefs,
+      preResolve: true,
+    );
     gh.lazySingleton<_i353.AppDatabase>(() => databaseModule.appDatabase);
     gh.lazySingleton<_i361.Dio>(() => serviceModule.dio);
     gh.lazySingleton<_i448.AIService>(
@@ -110,6 +116,8 @@ extension GetItInjectableX on _i174.GetIt {
     return this;
   }
 }
+
+class _$DataSourceModule extends _i560.DataSourceModule {}
 
 class _$DatabaseModule extends _i1021.DatabaseModule {}
 
