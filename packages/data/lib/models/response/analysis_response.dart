@@ -15,8 +15,8 @@ abstract class AnalysisResponse with _$AnalysisResponse {
 @freezed
 abstract class PersonAnalysisResult with _$PersonAnalysisResult {
   const factory PersonAnalysisResult({
-    required String imageName,
-    required String imageBytes,
+    @Default(null) String? imageName,
+    @Default(null) String? imageBytes,
     required bool isFaceExit,
   }) = _PersonAnalysisResult;
 

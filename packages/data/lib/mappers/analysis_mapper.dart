@@ -7,7 +7,8 @@ extension AnalysisResponseMapper on AnalysisResponse {
   AnalysisResult toDomain(int lastIndex) {
     final newMax = images
         .map((e) {
-          final digits = e.imageName.replaceAll(RegExp(r'[^0-9]'), '');
+          final imageName = e.imageName ?? '';
+          final digits = imageName.replaceAll(RegExp(r'[^0-9]'), '');
           return int.tryParse(digits) ?? lastIndex;
         })
         .fold(lastIndex, (prev, curr) => curr > prev ? curr : prev);
@@ -22,8 +23,10 @@ extension AnalysisResponseMapper on AnalysisResponse {
 extension PersonAnalysisResultMapper on PersonAnalysisResult {
   PersonAnalysisEntity toDomain() {
     return PersonAnalysisEntity(
-      systemName: imageName,
-      imageBytes: base64Decode(imageBytes),
+      systemName: imageName ?? "unknown",
+      imageBytes: (imageBytes != null && imageBytes!.isNotEmpty)
+          ? base64Decode(imageBytes!)
+          : null,
       isFaceExit: isFaceExit,
     );
   }
