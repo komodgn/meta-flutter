@@ -77,6 +77,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i307.AnalysisMetadataStorage>(
       () => _i307.AnalysisMetadataStorageImpl(gh<_i460.SharedPreferences>()),
     );
+    gh.lazySingleton<_i234.PersonRepository>(
+      () => _i802.PersonRepositoryImpl(
+        gh<_i504.PersonDao>(),
+        gh<_i448.AIService>(),
+        gh<_i1015.WebService>(),
+      ),
+    );
     gh.lazySingleton<_i318.Neo4jConfigStorage>(
       () => _i318.Neo4jConfigStorageImpl(gh<_i460.SharedPreferences>()),
     );
@@ -98,14 +105,6 @@ extension GetItInjectableX on _i174.GetIt {
         aiService: gh<_i448.AIService>(),
         analyzedImageDao: gh<_i589.AnalyzedImageDao>(),
         analysisMetadataStorage: gh<_i307.AnalysisMetadataStorage>(),
-      ),
-    );
-    gh.lazySingleton<_i234.PersonRepository>(
-      () => _i802.PersonRepositoryImpl(
-        gh<_i504.PersonDao>(),
-        gh<_i448.AIService>(),
-        gh<_i1015.WebService>(),
-        gh<_i524.Neo4jRepository>(),
       ),
     );
     gh.lazySingleton<_i399.GraphRepository>(
