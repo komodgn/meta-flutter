@@ -1,15 +1,10 @@
+import 'package:domain/entities/name_mapping.dart';
 import 'package:drift/drift.dart';
 import '../app_database.dart';
 import '../tables/person_table.dart';
 import '../tables/face_table.dart';
 
 part 'person_dao.g.dart';
-
-class NameMapping {
-  final String serverName;
-  final String actualName;
-  NameMapping({required this.serverName, required this.actualName});
-}
 
 class PersonWithFaces {
   final PersonEntity person;
@@ -21,10 +16,25 @@ class PersonWithFaces {
 class PersonDao extends DatabaseAccessor<AppDatabase> with _$PersonDaoMixin {
   PersonDao(AppDatabase db) : super(db);
 
-  Future<int> insertPerson(PersonsCompanion entry) =>
-      into(persons).insert(entry);
+  Future<int> insertPerson(String systemName) {
+    return into(persons).insert(
+      PersonsCompanion.insert(systemName: systemName, inputName: systemName),
+    );
+  }
 
-  Future<int> insertFace(FacesCompanion entry) => into(faces).insert(entry);
+  Future<int> insertFace(
+    int personId,
+    String systemName,
+    Uint8List imageBytes,
+  ) {
+    return into(faces).insert(
+      FacesCompanion.insert(
+        personId: personId,
+        systemName: systemName,
+        imageData: imageBytes,
+      ),
+    );
+  }
 
   Future<int?> findCurrentPersonIdByServerLabel(String serverLabel) async {
     final query = selectOnly(faces)
@@ -35,7 +45,7 @@ class PersonDao extends DatabaseAccessor<AppDatabase> with _$PersonDaoMixin {
     return row?.read(faces.personId);
   }
 
-  Stream<List<PersonWithFaces>> getPersonsWithFacesStream() {
+  Stream<List<PersonWithFaces>> getAllPersonsWithFacesStream() {
     final query = select(
       persons,
     ).join([leftOuterJoin(faces, faces.personId.equalsExp(persons.id))]);
@@ -51,6 +61,22 @@ class PersonDao extends DatabaseAccessor<AppDatabase> with _$PersonDaoMixin {
       return grouped.entries
           .map((e) => PersonWithFaces(person: e.key, faces: e.value))
           .toList();
+    });
+  }
+
+  Stream<PersonWithFaces?> getPersonWithFacesStreamById(int id) {
+    final query = select(persons).join([
+      leftOuterJoin(faces, faces.personId.equalsExp(persons.id)),
+    ])..where(persons.id.equals(id));
+
+    return query.watch().map((rows) {
+      if (rows.isEmpty) return null;
+      final person = rows.first.readTable(persons);
+      final facesList = rows
+          .map((row) => row.readTableOrNull(faces))
+          .whereType<FaceEntity>()
+          .toList();
+      return PersonWithFaces(person: person, faces: facesList);
     });
   }
 
@@ -88,16 +114,8 @@ class PersonDao extends DatabaseAccessor<AppDatabase> with _$PersonDaoMixin {
     Uint8List imageBytes,
   ) async {
     await transaction(() async {
-      final personId = await insertPerson(
-        PersonsCompanion.insert(systemName: systemName, inputName: systemName),
-      );
-      final faceId = await insertFace(
-        FacesCompanion.insert(
-          personId: personId,
-          systemName: systemName,
-          imageData: imageBytes,
-        ),
-      );
+      final personId = await insertPerson(systemName);
+      final faceId = await insertFace(personId, systemName, imageBytes);
       await updateRepresentativeFace(personId, faceId);
     });
   }
