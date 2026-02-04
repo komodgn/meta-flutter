@@ -183,6 +183,7 @@ class RunFullAnalysisUseCase {
 
       try {
         await personRepository.changePersonNameOnServer(
+          dbName: dbName,
           oldName: serverName,
           newName: actualName,
         );
