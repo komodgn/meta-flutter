@@ -6,7 +6,7 @@ class CypherQueryGenerator {
         .asMap()
         .entries
         .map((entry) {
-          return "(photo)-[]->(a${entry.key}) {name: '${entry.value}'})";
+          return "(photo)-[]->(a${entry.key} {name: '${entry.value}'})";
         })
         .join(", ");
 
