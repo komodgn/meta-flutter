@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:presentation/pages/graph_page.dart';
 import 'package:presentation/pages/nl_search_page.dart';
 import 'package:presentation/pages/person_page.dart';
 import 'package:presentation/pages/home_page.dart';
+import 'package:presentation/providers/search/nl_search_provider.dart';
+import 'package:provider/provider.dart';
 
 class MetaApp extends StatelessWidget {
   const MetaApp({super.key});
@@ -33,7 +36,10 @@ class _MainHolderState extends State<MainHolder> {
   final List<Widget> _screens = [
     const PersonScreen(),
     const HomeScreen(),
-    const NLSearchScreen(),
+    ChangeNotifierProvider(
+      create: (_) => GetIt.I<NlSearchProvider>(),
+      child: const NLSearchScreen(),
+    ),
     const GraphWebView(),
   ];
 

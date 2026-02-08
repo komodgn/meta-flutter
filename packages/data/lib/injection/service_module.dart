@@ -11,21 +11,46 @@ abstract class ServiceModule {
   Dio get dio {
     final dio = Dio();
 
+    dio.options.headers = {'Connection': 'keep-alive'};
+
     dio.interceptors.add(
       LogInterceptor(
         request: true,
         requestHeader: true,
         requestBody: true,
         responseHeader: true,
-        responseBody: true,
+        responseBody: false,
         error: true,
       ),
     );
 
-    dio.options.connectTimeout = const Duration(seconds: 1000);
-    dio.options.receiveTimeout = const Duration(seconds: 1000);
+    dio.options.connectTimeout = const Duration(minutes: 100);
+    dio.options.receiveTimeout = const Duration(minutes: 100);
 
     return dio;
+  }
+
+  @Named("openAIDio")
+  @lazySingleton
+  Dio openAIDio(Dio commonDio) {
+    final openAIDio = Dio(commonDio.options);
+
+    openAIDio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          final apiKey = dotenv.env['OPENAI_API_KEY'];
+          options.headers['Authorization'] = 'Bearer $apiKey';
+          options.headers['Content-Type'] = 'application/json';
+          return handler.next(options);
+        },
+      ),
+    );
+
+    openAIDio.interceptors.add(
+      LogInterceptor(requestBody: true, responseBody: true),
+    );
+
+    return openAIDio;
   }
 
   @lazySingleton
@@ -43,5 +68,6 @@ abstract class ServiceModule {
   }
 
   @lazySingleton
-  OpenAIService openAIService(Dio dio) => OpenAIService(dio);
+  OpenAIService openAIService(@Named("openAIDio") Dio dio) =>
+      OpenAIService(dio);
 }

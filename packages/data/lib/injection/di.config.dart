@@ -62,9 +62,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1015.WebService>(
       () => serviceModule.webService(gh<_i361.Dio>()),
     );
-    gh.lazySingleton<_i330.OpenAIService>(
-      () => serviceModule.openAIService(gh<_i361.Dio>()),
-    );
     gh.lazySingleton<_i504.PersonDao>(
       () => databaseModule.personDao(gh<_i353.AppDatabase>()),
     );
@@ -73,6 +70,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i959.GalleryRepository>(
       () => _i37.GalleryRepositoryImpl(),
+    );
+    gh.lazySingleton<_i361.Dio>(
+      () => serviceModule.openAIDio(gh<_i361.Dio>()),
+      instanceName: 'openAIDio',
     );
     gh.lazySingleton<_i307.AnalysisMetadataStorage>(
       () => _i307.AnalysisMetadataStorageImpl(gh<_i460.SharedPreferences>()),
@@ -87,12 +88,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i318.Neo4jConfigStorage>(
       () => _i318.Neo4jConfigStorageImpl(gh<_i460.SharedPreferences>()),
     );
-    gh.factory<_i508.SearchRepository>(
-      () => _i14.SearchRepositoryImpl(
-        gh<_i448.AIService>(),
-        gh<_i1015.WebService>(),
-        gh<_i330.OpenAIService>(),
-      ),
+    gh.lazySingleton<_i330.OpenAIService>(
+      () =>
+          serviceModule.openAIService(gh<_i361.Dio>(instanceName: 'openAIDio')),
     );
     gh.lazySingleton<_i524.Neo4jRepository>(
       () => _i325.Neo4jRepositoryImpl(
@@ -110,6 +108,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i399.GraphRepository>(
       () => _i221.GraphRepositoryImpl(
         neo4jRepository: gh<_i524.Neo4jRepository>(),
+      ),
+    );
+    gh.factory<_i508.SearchRepository>(
+      () => _i14.SearchRepositoryImpl(
+        aiService: gh<_i448.AIService>(),
+        webService: gh<_i1015.WebService>(),
+        openAIService: gh<_i330.OpenAIService>(),
       ),
     );
     return this;

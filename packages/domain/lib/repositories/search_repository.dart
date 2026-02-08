@@ -5,8 +5,8 @@ import 'package:domain/entities/search_result.dart';
 
 abstract class SearchRepository {
   Future<List<String>> getDetectedObjectNames({
-    required File imageFile,
     required String dbName,
+    required File imageFile,
     required List<Circle> circles,
   });
 

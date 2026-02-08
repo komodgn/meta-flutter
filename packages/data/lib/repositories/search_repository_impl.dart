@@ -21,12 +21,16 @@ class SearchRepositoryImpl implements SearchRepository {
   final WebService webService;
   final OpenAIService openAIService;
 
-  SearchRepositoryImpl(this.aiService, this.webService, this.openAIService);
+  SearchRepositoryImpl({
+    required this.aiService,
+    required this.webService,
+    required this.openAIService,
+  });
 
   @override
   Future<List<String>> getDetectedObjectNames({
-    required File imageFile,
     required String dbName,
+    required File imageFile,
     required List<Circle> circles,
   }) async {
     final multipartFile = await MultipartFile.fromFile(

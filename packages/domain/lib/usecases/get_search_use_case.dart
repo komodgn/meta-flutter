@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:domain/constants/prompt_constans.dart';
 import 'package:domain/entities/circle.dart';
+import 'package:domain/entities/gallery_image.dart';
 import 'package:domain/entities/search_result.dart';
 import 'package:domain/repositories/gallery_repository.dart';
 import 'package:domain/repositories/neo4j_repository.dart';
@@ -40,7 +41,7 @@ class GetSearchUseCase {
     final mappedNames = await Future.wait(
       systemNames.map((name) async {
         final inputName = await _personRepository.getInputNameBySystemName(
-          name,
+          systemName: name,
         );
         return (inputName != null && inputName.isNotEmpty) ? inputName : name;
       }),
@@ -71,14 +72,14 @@ class GetSearchUseCase {
     );
   }
 
-  Future<NLSearchResult> performNLSearch(String query) async {
+  Future<List<GalleryImage>> performNLSearch(String query) async {
     final dbName = await _neo4jRepository.getDatabaseName();
 
     final keywords = await _searchRepository.extractKeywords(
       PromptConstants.nlSearchBasicPrompt + query,
     );
 
-    if (keywords.isEmpty) return NLSearchResult(matchedUris: []);
+    if (keywords.isEmpty) return [];
 
     final cypher = CypherQueryGenerator.generateQueryByKeywords(keywords);
 
@@ -87,8 +88,6 @@ class GetSearchUseCase {
       query: cypher,
     );
 
-    final uris = await _galleryRepository.findMatchedUris(photoNames);
-
-    return NLSearchResult(matchedUris: uris.map((e) => e.toString()).toList());
+    return await _galleryRepository.findMatchedUris(photoNames);
   }
 }
