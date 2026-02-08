@@ -33,7 +33,7 @@ abstract class WebService {
   });
 
   @POST("personsearch")
-  Future<List<String>> sendPersonData({
+  Future<List<String>> getPersonPhotosNames({
     @Body() required PersonSearchRequest request,
   });
 

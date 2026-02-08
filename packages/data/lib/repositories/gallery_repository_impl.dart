@@ -49,7 +49,7 @@ class GalleryRepositoryImpl implements GalleryRepository {
   }
 
   @override
-  Future<List<String>> findMatchedUris(List<String> photoNames) async {
+  Future<List<GalleryImage>> findMatchedUris(List<String> photoNames) async {
     final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
       type: RequestType.image,
     );
@@ -60,9 +60,21 @@ class GalleryRepositoryImpl implements GalleryRepository {
       end: await albums[0].assetCountAsync,
     );
 
+    final normalizedNames = photoNames.map((e) => e.toLowerCase()).toSet();
+
     return allAssets
-        .where((asset) => photoNames.contains(asset.title))
-        .map((asset) => asset.id)
+        .where(
+          (asset) =>
+              asset.title != null &&
+              normalizedNames.contains(asset.title!.toLowerCase()),
+        )
+        .map(
+          (asset) => GalleryImage(
+            id: asset.id,
+            name: asset.title ?? "unknown",
+            entity: asset,
+          ),
+        )
         .toList();
   }
 }

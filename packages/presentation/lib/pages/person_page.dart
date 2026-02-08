@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:presentation/pages/person_detail_page.dart';
+import 'package:presentation/providers/person/person_detail_provider.dart';
 import 'package:presentation/providers/person/person_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -25,30 +28,45 @@ class PersonScreen extends StatelessWidget {
               itemCount: people.length,
               itemBuilder: (context, index) {
                 final person = people[index];
-                return Column(
-                  children: [
-                    Expanded(
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundImage: person.representativeFace != null
-                            ? MemoryImage(person.representativeFace!.imageData)
-                            : null,
-                        child: person.representativeFace == null
-                            ? const Icon(Icons.person, size: 40)
-                            : null,
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChangeNotifierProvider(
+                          create: (_) => GetIt.I<PersonDetailProvider>(),
+                          child: PersonDetailPage(person: person),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      person.inputName,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      'Count ${person.photoCount}',
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                  ],
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: CircleAvatar(
+                          radius: 40,
+                          backgroundImage: person.representativeFace != null
+                              ? MemoryImage(
+                                  person.representativeFace!.imageData,
+                                )
+                              : null,
+                          child: person.representativeFace == null
+                              ? const Icon(Icons.person, size: 40)
+                              : null,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        person.inputName,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        'Count ${person.photoCount}',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),

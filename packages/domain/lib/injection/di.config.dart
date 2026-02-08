@@ -17,9 +17,10 @@ import 'package:domain/repositories/search_repository.dart' as _i508;
 import 'package:domain/usecases/get_all_person_use_case.dart' as _i585;
 import 'package:domain/usecases/get_gallery_images_use_case.dart' as _i923;
 import 'package:domain/usecases/get_home_display_person_use_case.dart' as _i504;
+import 'package:domain/usecases/get_person_photos_use_case.dart' as _i912;
 import 'package:domain/usecases/person/person_use_case.dart' as _i880;
 import 'package:domain/usecases/run_full_analysis_use_case.dart' as _i200;
-import 'package:domain/usecases/search/get_search_use_case.dart' as _i356;
+import 'package:domain/usecases/get_search_use_case.dart' as _i356;
 import 'package:domain/usecases/update_photo_permission_use_case.dart' as _i802;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -48,6 +49,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i234.PersonRepository>(),
         gh<_i959.GalleryRepository>(),
         gh<_i524.Neo4jRepository>(),
+      ),
+    );
+    gh.factory<_i912.GetPersonPhotosUseCase>(
+      () => _i912.GetPersonPhotosUseCase(
+        personRepository: gh<_i234.PersonRepository>(),
+        galleryRepository: gh<_i959.GalleryRepository>(),
+        neo4jRepository: gh<_i524.Neo4jRepository>(),
       ),
     );
     gh.factory<_i585.GetAllPersonUseCase>(

@@ -57,4 +57,9 @@ abstract class PersonRepository {
     required String dbName,
     required List<Person> localPeople,
   });
+
+  Future<List<String>> getPersonPhotosNames({
+    required String dbName,
+    required String personName,
+  });
 }

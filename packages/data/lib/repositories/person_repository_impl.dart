@@ -5,6 +5,7 @@ import 'package:data/mappers/person_mapper.dart';
 import 'package:data/models/request/change_name_request.dart';
 import 'package:data/models/request/delete_entity_request.dart';
 import 'package:data/models/request/person_frequency_request.dart';
+import 'package:data/models/request/person_search_request.dart';
 import 'package:data/models/response/person_frequency_response.dart';
 import 'package:data/services/ai_service.dart';
 import 'package:data/services/web_service.dart';
@@ -135,5 +136,20 @@ class PersonRepositoryImpl implements PersonRepository {
   @override
   Future<List<NameMapping>> getMismatchedFaceNames() async {
     return await _personDao.getMismatchedFaceNames();
+  }
+
+  @override
+  Future<List<String>> getPersonPhotosNames({
+    required String dbName,
+    required String personName,
+  }) async {
+    try {
+      final List<String> photoNames = await _webService.getPersonPhotosNames(
+        request: PersonSearchRequest(dbName: dbName, personName: personName),
+      );
+      return photoNames;
+    } catch (e) {
+      rethrow;
+    }
   }
 }
