@@ -2,9 +2,10 @@ import 'package:domain/entities/gallery_image.dart';
 import 'package:domain/usecases/get_search_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import 'package:presentation/providers/base_provider.dart';
 
 @injectable
-class NlSearchProvider extends ChangeNotifier {
+class NlSearchProvider extends BaseProvider {
   final GetSearchUseCase getSearchUseCase;
 
   NlSearchProvider({required this.getSearchUseCase});

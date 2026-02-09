@@ -1,13 +1,19 @@
 import 'package:domain/entities/gallery_image.dart';
+import 'package:domain/entities/person.dart';
 import 'package:domain/usecases/get_person_photos_use_case.dart';
-import 'package:flutter/material.dart';
+import 'package:domain/usecases/person/toggle_home_display_use_case.dart';
 import 'package:injectable/injectable.dart';
+import 'package:presentation/providers/base_provider.dart';
 
 @injectable
-class PersonDetailProvider extends ChangeNotifier {
+class PersonDetailProvider extends BaseProvider {
   final GetPersonPhotosUseCase getPersonPhotosUseCase;
+  final ToggleHomeDisplayUseCase toggleHomeDisplayUseCase;
 
-  PersonDetailProvider({required this.getPersonPhotosUseCase});
+  PersonDetailProvider({
+    required this.getPersonPhotosUseCase,
+    required this.toggleHomeDisplayUseCase,
+  });
 
   List<GalleryImage> _personPhotos = [];
   bool _isLoading = false;
@@ -27,5 +33,9 @@ class PersonDetailProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> toggleHomeDisplay(Person person) async {
+    await toggleHomeDisplayUseCase.execute(person);
   }
 }

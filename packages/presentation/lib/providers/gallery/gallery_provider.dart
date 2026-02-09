@@ -4,9 +4,10 @@ import 'package:domain/usecases/update_photo_permission_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:presentation/providers/base_provider.dart';
 
 @injectable
-class GalleryProvider with ChangeNotifier {
+class GalleryProvider extends BaseProvider {
   final GetGalleryImagesUseCase getGalleryImagesUseCase;
   final UpdatePhotoPermissionUseCase updatePhotoPermissionUseCase;
 

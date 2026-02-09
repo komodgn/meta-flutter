@@ -5,9 +5,10 @@ import 'package:domain/entities/search_result.dart';
 import 'package:domain/usecases/get_search_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
+import 'package:presentation/providers/base_provider.dart';
 
 @injectable
-class SearchProvider with ChangeNotifier {
+class SearchProvider extends BaseProvider {
   final GetSearchUseCase getSearchUseCase;
 
   SearchProvider({required this.getSearchUseCase});
