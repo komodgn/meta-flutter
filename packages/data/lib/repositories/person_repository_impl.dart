@@ -152,4 +152,9 @@ class PersonRepositoryImpl implements PersonRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> updatePerson(Person person) async {
+    await _personDao.updatePerson(person);
+  }
 }

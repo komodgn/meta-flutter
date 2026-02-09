@@ -37,6 +37,8 @@ abstract class PersonRepository {
     required int? faceId,
   });
 
+  Future<void> updatePerson(Person person);
+
   Future<void> deletePerson({required int id});
 
   Future<void> mergePersons({required int sourceId, required int targetId});

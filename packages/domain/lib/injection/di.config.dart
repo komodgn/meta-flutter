@@ -18,9 +18,11 @@ import 'package:domain/usecases/get_all_person_use_case.dart' as _i585;
 import 'package:domain/usecases/get_gallery_images_use_case.dart' as _i923;
 import 'package:domain/usecases/get_home_display_person_use_case.dart' as _i504;
 import 'package:domain/usecases/get_person_photos_use_case.dart' as _i912;
+import 'package:domain/usecases/get_search_use_case.dart' as _i690;
 import 'package:domain/usecases/person/person_use_case.dart' as _i880;
+import 'package:domain/usecases/person/toggle_home_display_use_case.dart'
+    as _i763;
 import 'package:domain/usecases/run_full_analysis_use_case.dart' as _i200;
-import 'package:domain/usecases/get_search_use_case.dart' as _i356;
 import 'package:domain/usecases/update_photo_permission_use_case.dart' as _i802;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -43,8 +45,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i923.GetGalleryImagesUseCase>(
       () => _i923.GetGalleryImagesUseCase(gh<_i959.GalleryRepository>()),
     );
-    gh.factory<_i356.GetSearchUseCase>(
-      () => _i356.GetSearchUseCase(
+    gh.factory<_i690.GetSearchUseCase>(
+      () => _i690.GetSearchUseCase(
         gh<_i508.SearchRepository>(),
         gh<_i234.PersonRepository>(),
         gh<_i959.GalleryRepository>(),
@@ -66,6 +68,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i504.GetHomeDisplayPersonUseCase>(
       () => _i504.GetHomeDisplayPersonUseCase(
         personRepository: gh<_i234.PersonRepository>(),
+      ),
+    );
+    gh.factory<_i763.ToggleHomeDisplayUseCase>(
+      () => _i763.ToggleHomeDisplayUseCase(
+        repository: gh<_i234.PersonRepository>(),
       ),
     );
     gh.factory<_i880.PersonUseCase>(

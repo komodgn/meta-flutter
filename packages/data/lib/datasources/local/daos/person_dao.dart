@@ -1,4 +1,5 @@
 import 'package:domain/entities/name_mapping.dart';
+import 'package:domain/entities/person.dart';
 import 'package:drift/drift.dart';
 import '../app_database.dart';
 import '../tables/person_table.dart';
@@ -123,6 +124,17 @@ class PersonDao extends DatabaseAccessor<AppDatabase> with _$PersonDaoMixin {
   Future<void> updateRepresentativeFace(int personId, int faceId) {
     return (update(persons)..where((t) => t.id.equals(personId))).write(
       PersonsCompanion(representativeFaceId: Value(faceId)),
+    );
+  }
+
+  Future<void> updatePerson(Person person) {
+    return (update(persons)..where((t) => t.id.equals(person.id))).write(
+      PersonsCompanion(
+        inputName: Value(person.inputName),
+        phoneNumber: Value(person.phoneNumber),
+        isHomeDisplay: Value(person.isHomeDisplay),
+        representativeFaceId: Value(person.representativeFaceId),
+      ),
     );
   }
 
