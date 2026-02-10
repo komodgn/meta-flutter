@@ -14,7 +14,7 @@ class PersonScreen extends StatelessWidget {
     final people = personProvider.allPersons;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('PERSON')),
+      appBar: AppBar(title: const Text('PEOPLE')),
       body: people.isEmpty
           ? const Center(child: Text('No people analyzed.'))
           : GridView.builder(

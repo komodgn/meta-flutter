@@ -4,6 +4,7 @@ import 'package:presentation/pages/graph_page.dart';
 import 'package:presentation/pages/nl_search_page.dart';
 import 'package:presentation/pages/person_page.dart';
 import 'package:presentation/pages/home_page.dart';
+import 'package:presentation/providers/graph/graph_provider.dart';
 import 'package:presentation/providers/search/nl_search_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -40,7 +41,10 @@ class _MainHolderState extends State<MainHolder> {
       create: (_) => GetIt.I<NlSearchProvider>(),
       child: const NLSearchScreen(),
     ),
-    const GraphWebView(),
+    ChangeNotifierProvider(
+      create: (_) => GetIt.I<GraphProvider>(),
+      child: const GraphWebView(),
+    ),
   ];
 
   @override
@@ -58,7 +62,7 @@ class _MainHolderState extends State<MainHolder> {
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Person'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'People'),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(
