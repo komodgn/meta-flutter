@@ -1,3 +1,5 @@
+import 'package:domain/entities/gallery_image.dart';
+
 class SearchResult {
   final List<PhotoGroup> groups;
 
@@ -7,13 +9,19 @@ class SearchResult {
 class PhotoGroup {
   final String categoryName;
   final List<String> photoNames;
+  final List<GalleryImage> images;
 
-  PhotoGroup({required this.categoryName, required this.photoNames});
+  PhotoGroup({
+    required this.categoryName,
+    required this.photoNames,
+    this.images = const [],
+  });
 
-  PhotoGroup copyWith({String? categoryName, List<String>? photoNames}) {
+  PhotoGroup copyWith({List<GalleryImage>? images}) {
     return PhotoGroup(
-      categoryName: categoryName ?? this.categoryName,
-      photoNames: photoNames ?? this.photoNames,
+      categoryName: categoryName,
+      photoNames: photoNames,
+      images: images ?? this.images,
     );
   }
 }

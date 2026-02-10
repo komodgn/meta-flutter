@@ -11,7 +11,11 @@ abstract class ServiceModule {
   Dio get dio {
     final dio = Dio();
 
-    dio.options.headers = {'Connection': 'keep-alive'};
+    dio.options.headers = {
+      'Connection': 'keep-alive',
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
 
     dio.interceptors.add(
       LogInterceptor(

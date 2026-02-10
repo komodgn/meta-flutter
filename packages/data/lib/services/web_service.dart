@@ -22,7 +22,6 @@ abstract class WebService {
   factory WebService(Dio dio, {String baseUrl}) = _WebService;
 
   @POST("android/circleToSearch")
-  @MultiPart()
   Future<DragSearchResponse> sendDetectedObjects({
     @Body() required DetectedObjectsRequest request,
   });

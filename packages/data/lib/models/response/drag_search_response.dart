@@ -1,27 +1,23 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'drag_search_response.freezed.dart';
 part 'drag_search_response.g.dart';
 
-@JsonSerializable(explicitToJson: true)
-class DragSearchResponse {
-  final Photos photos;
-
-  DragSearchResponse({required this.photos});
+@freezed
+abstract class DragSearchResponse with _$DragSearchResponse {
+  const factory DragSearchResponse({required Photos photos}) =
+      _DragSearchResponse;
 
   factory DragSearchResponse.fromJson(Map<String, dynamic> json) =>
       _$DragSearchResponseFromJson(json);
-
-  Map<String, dynamic> toJson() => _$DragSearchResponseToJson(this);
 }
 
-@JsonSerializable()
-class Photos {
-  final List<String> commonPhotos;
-  final Map<String, List<String>> individualPhotos;
-
-  Photos({required this.commonPhotos, required this.individualPhotos});
+@freezed
+abstract class Photos with _$Photos {
+  const factory Photos({
+    required List<String> commonPhotos,
+    required Map<String, List<String>> individualPhotos,
+  }) = _Photos;
 
   factory Photos.fromJson(Map<String, dynamic> json) => _$PhotosFromJson(json);
-
-  Map<String, dynamic> toJson() => _$PhotosToJson(this);
 }

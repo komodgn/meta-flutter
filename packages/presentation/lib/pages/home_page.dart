@@ -7,6 +7,7 @@ import 'package:presentation/pages/photo_detail_screen.dart';
 import 'package:presentation/providers/gallery/gallery_provider.dart';
 import 'package:presentation/providers/person/person_detail_provider.dart';
 import 'package:presentation/providers/person/person_provider.dart';
+import 'package:presentation/providers/search/drag_search_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -178,7 +179,10 @@ class GalleryGridSection extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => PhotoDetailScreen(imageFile: file),
+                builder: (context) => ChangeNotifierProvider(
+                  create: (_) => GetIt.I<DragSearchProvider>(),
+                  child: PhotoDetailScreen(imageFile: file),
+                ),
               ),
             );
           }

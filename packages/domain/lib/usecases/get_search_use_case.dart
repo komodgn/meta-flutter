@@ -33,8 +33,8 @@ class GetSearchUseCase {
     final dbName = await _neo4jRepository.getDatabaseName();
 
     final systemNames = await _searchRepository.getDetectedObjectNames(
-      imageFile: imageFile,
       dbName: dbName,
+      imageFile: imageFile,
       circles: circles,
     );
 
@@ -58,17 +58,16 @@ class GetSearchUseCase {
       properties: properties,
     );
 
-    final updatedGroups = await Future.wait(
+    final List<PhotoGroup> updatedGroups = await Future.wait(
       rawResult.groups.map((group) async {
-        final uris = await _galleryRepository.findMatchedUris(group.photoNames);
-        return group.copyWith(
-          photoNames: uris.map((e) => e.toString()).toList(),
-        );
+        final List<GalleryImage> galleryImages = await _galleryRepository
+            .findMatchedUris(group.photoNames);
+        return group.copyWith(images: galleryImages);
       }),
     );
 
     return SearchResult(
-      groups: updatedGroups.where((g) => g.photoNames.isNotEmpty).toList(),
+      groups: updatedGroups.where((g) => g.images.isNotEmpty).toList(),
     );
   }
 
