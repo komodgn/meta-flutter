@@ -10,12 +10,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:domain/repositories/gallery_repository.dart' as _i959;
+import 'package:domain/repositories/graph_repository.dart' as _i399;
 import 'package:domain/repositories/image_analysis_repository.dart' as _i23;
 import 'package:domain/repositories/neo4j_repository.dart' as _i524;
 import 'package:domain/repositories/person_repository.dart' as _i234;
 import 'package:domain/repositories/search_repository.dart' as _i508;
 import 'package:domain/usecases/get_all_person_use_case.dart' as _i585;
 import 'package:domain/usecases/get_gallery_images_use_case.dart' as _i923;
+import 'package:domain/usecases/get_graph_use_case.dart' as _i534;
 import 'package:domain/usecases/get_home_display_person_use_case.dart' as _i504;
 import 'package:domain/usecases/get_person_photos_use_case.dart' as _i912;
 import 'package:domain/usecases/get_search_use_case.dart' as _i690;
@@ -51,6 +53,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i234.PersonRepository>(),
         gh<_i959.GalleryRepository>(),
         gh<_i524.Neo4jRepository>(),
+      ),
+    );
+    gh.factory<_i534.GetGraphUseCase>(
+      () => _i534.GetGraphUseCase(
+        graphRepository: gh<_i399.GraphRepository>(),
+        galleryRepository: gh<_i959.GalleryRepository>(),
       ),
     );
     gh.factory<_i912.GetPersonPhotosUseCase>(
