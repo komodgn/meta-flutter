@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:domain/entities/person.dart';
-import 'package:domain/usecases/get_all_person_use_case.dart';
-import 'package:domain/usecases/get_home_display_person_use_case.dart';
+import 'package:domain/usecases/person/get_all_person_use_case.dart';
+import 'package:domain/usecases/person/get_home_display_person_use_case.dart';
 import 'package:injectable/injectable.dart';
 import 'package:presentation/providers/base_provider.dart';
 

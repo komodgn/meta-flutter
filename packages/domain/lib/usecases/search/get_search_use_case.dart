@@ -10,7 +10,7 @@ import 'package:domain/repositories/person_repository.dart';
 import 'package:domain/utils/cypher_query_generator.dart';
 import 'package:injectable/injectable.dart';
 
-import '../repositories/search_repository.dart';
+import '../../repositories/search_repository.dart';
 
 @injectable
 class GetSearchUseCase {

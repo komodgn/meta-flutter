@@ -1,6 +1,6 @@
 import 'package:domain/entities/gallery_image.dart';
 import 'package:domain/entities/person.dart';
-import 'package:domain/usecases/get_person_photos_use_case.dart';
+import 'package:domain/usecases/person/get_person_photos_use_case.dart';
 import 'package:domain/usecases/person/toggle_home_display_use_case.dart';
 import 'package:injectable/injectable.dart';
 import 'package:presentation/providers/base_provider.dart';

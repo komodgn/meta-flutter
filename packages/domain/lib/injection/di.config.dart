@@ -15,17 +15,21 @@ import 'package:domain/repositories/image_analysis_repository.dart' as _i23;
 import 'package:domain/repositories/neo4j_repository.dart' as _i524;
 import 'package:domain/repositories/person_repository.dart' as _i234;
 import 'package:domain/repositories/search_repository.dart' as _i508;
-import 'package:domain/usecases/get_all_person_use_case.dart' as _i585;
-import 'package:domain/usecases/get_gallery_images_use_case.dart' as _i923;
-import 'package:domain/usecases/get_graph_use_case.dart' as _i534;
-import 'package:domain/usecases/get_home_display_person_use_case.dart' as _i504;
-import 'package:domain/usecases/get_person_photos_use_case.dart' as _i912;
-import 'package:domain/usecases/get_search_use_case.dart' as _i690;
+import 'package:domain/usecases/gallery/get_gallery_images_use_case.dart'
+    as _i607;
+import 'package:domain/usecases/gallery/update_photo_permission_use_case.dart'
+    as _i829;
+import 'package:domain/usecases/graph/get_graph_use_case.dart' as _i1022;
+import 'package:domain/usecases/person/get_all_person_use_case.dart' as _i406;
+import 'package:domain/usecases/person/get_home_display_person_use_case.dart'
+    as _i310;
+import 'package:domain/usecases/person/get_person_photos_use_case.dart'
+    as _i211;
 import 'package:domain/usecases/person/person_use_case.dart' as _i880;
 import 'package:domain/usecases/person/toggle_home_display_use_case.dart'
     as _i763;
 import 'package:domain/usecases/run_full_analysis_use_case.dart' as _i200;
-import 'package:domain/usecases/update_photo_permission_use_case.dart' as _i802;
+import 'package:domain/usecases/search/get_search_use_case.dart' as _i356;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -44,37 +48,37 @@ extension GetItInjectableX on _i174.GetIt {
         neo4jRepository: gh<_i524.Neo4jRepository>(),
       ),
     );
-    gh.factory<_i923.GetGalleryImagesUseCase>(
-      () => _i923.GetGalleryImagesUseCase(gh<_i959.GalleryRepository>()),
+    gh.factory<_i607.GetGalleryImagesUseCase>(
+      () => _i607.GetGalleryImagesUseCase(gh<_i959.GalleryRepository>()),
     );
-    gh.factory<_i690.GetSearchUseCase>(
-      () => _i690.GetSearchUseCase(
+    gh.factory<_i356.GetSearchUseCase>(
+      () => _i356.GetSearchUseCase(
         gh<_i508.SearchRepository>(),
         gh<_i234.PersonRepository>(),
         gh<_i959.GalleryRepository>(),
         gh<_i524.Neo4jRepository>(),
       ),
     );
-    gh.factory<_i534.GetGraphUseCase>(
-      () => _i534.GetGraphUseCase(
+    gh.factory<_i1022.GetGraphUseCase>(
+      () => _i1022.GetGraphUseCase(
         graphRepository: gh<_i399.GraphRepository>(),
         galleryRepository: gh<_i959.GalleryRepository>(),
       ),
     );
-    gh.factory<_i912.GetPersonPhotosUseCase>(
-      () => _i912.GetPersonPhotosUseCase(
+    gh.factory<_i211.GetPersonPhotosUseCase>(
+      () => _i211.GetPersonPhotosUseCase(
         personRepository: gh<_i234.PersonRepository>(),
         galleryRepository: gh<_i959.GalleryRepository>(),
         neo4jRepository: gh<_i524.Neo4jRepository>(),
       ),
     );
-    gh.factory<_i585.GetAllPersonUseCase>(
-      () => _i585.GetAllPersonUseCase(
+    gh.factory<_i406.GetAllPersonUseCase>(
+      () => _i406.GetAllPersonUseCase(
         personRepository: gh<_i234.PersonRepository>(),
       ),
     );
-    gh.factory<_i504.GetHomeDisplayPersonUseCase>(
-      () => _i504.GetHomeDisplayPersonUseCase(
+    gh.factory<_i310.GetHomeDisplayPersonUseCase>(
+      () => _i310.GetHomeDisplayPersonUseCase(
         personRepository: gh<_i234.PersonRepository>(),
       ),
     );
@@ -86,8 +90,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i880.PersonUseCase>(
       () => _i880.PersonUseCase(gh<_i234.PersonRepository>()),
     );
-    gh.factory<_i802.UpdatePhotoPermissionUseCase>(
-      () => _i802.UpdatePhotoPermissionUseCase(
+    gh.factory<_i829.UpdatePhotoPermissionUseCase>(
+      () => _i829.UpdatePhotoPermissionUseCase(
         galleryRepository: gh<_i959.GalleryRepository>(),
       ),
     );

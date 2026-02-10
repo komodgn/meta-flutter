@@ -1,5 +1,5 @@
 import 'package:domain/entities/gallery_image.dart';
-import 'package:domain/usecases/get_search_use_case.dart';
+import 'package:domain/usecases/search/get_search_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:presentation/providers/base_provider.dart';

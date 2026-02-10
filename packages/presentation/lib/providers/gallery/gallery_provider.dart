@@ -1,6 +1,6 @@
 import 'package:domain/entities/gallery_image.dart';
-import 'package:domain/usecases/get_gallery_images_use_case.dart';
-import 'package:domain/usecases/update_photo_permission_use_case.dart';
+import 'package:domain/usecases/gallery/get_gallery_images_use_case.dart';
+import 'package:domain/usecases/gallery/update_photo_permission_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:photo_manager/photo_manager.dart';

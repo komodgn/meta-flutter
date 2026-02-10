@@ -1,5 +1,5 @@
 import 'package:domain/entities/gallery_image.dart';
-import 'package:domain/usecases/get_graph_use_case.dart';
+import 'package:domain/usecases/graph/get_graph_use_case.dart';
 import 'package:injectable/injectable.dart';
 import 'package:presentation/providers/base_provider.dart';
 
