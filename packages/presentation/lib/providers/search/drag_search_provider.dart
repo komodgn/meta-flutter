@@ -8,10 +8,10 @@ import 'package:injectable/injectable.dart';
 import 'package:presentation/providers/base_provider.dart';
 
 @injectable
-class SearchProvider extends BaseProvider {
+class DragSearchProvider extends BaseProvider {
   final GetSearchUseCase getSearchUseCase;
 
-  SearchProvider({required this.getSearchUseCase});
+  DragSearchProvider({required this.getSearchUseCase});
 
   SearchResult? _result;
   SearchResult? get result => _result;
