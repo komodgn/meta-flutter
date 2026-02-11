@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
-import 'package:presentation/pages/person_detail_page.dart';
-import 'package:presentation/pages/photo_detail_screen.dart';
 import 'package:presentation/providers/gallery/gallery_provider.dart';
-import 'package:presentation/providers/person/person_detail_provider.dart';
 import 'package:presentation/providers/person/person_provider.dart';
-import 'package:presentation/providers/search/drag_search_provider.dart';
+import 'package:presentation/routes/router_paths.dart';
 import 'package:provider/provider.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -74,15 +71,7 @@ class LikedPeopleSection extends StatelessWidget {
               final person = persons[index];
               return GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChangeNotifierProvider(
-                        create: (_) => GetIt.I<PersonDetailProvider>(),
-                        child: PersonDetailPage(person: person),
-                      ),
-                    ),
-                  );
+                  context.push(RouterPaths.personDetail, extra: person);
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -176,15 +165,7 @@ class GalleryGridSection extends StatelessWidget {
         if (asset != null && context.mounted) {
           final file = await asset.file;
           if (file != null) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ChangeNotifierProvider(
-                  create: (_) => GetIt.I<DragSearchProvider>(),
-                  child: PhotoDetailScreen(imageFile: file),
-                ),
-              ),
-            );
+            context.push(RouterPaths.photoDetail, extra: file);
           }
         }
       },

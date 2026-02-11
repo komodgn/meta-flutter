@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_manager_image_provider/photo_manager_image_provider.dart';
-import 'package:presentation/pages/photo_detail_screen.dart';
 import 'package:presentation/providers/search/nl_search_provider.dart';
+import 'package:presentation/routes/router_paths.dart';
 import 'package:provider/provider.dart';
 
 class NLSearchScreen extends StatefulWidget {
@@ -94,12 +95,7 @@ class _NLSearchScreenState extends State<NLSearchScreen> {
             if (asset != null && context.mounted) {
               final file = await asset.file;
               if (file != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PhotoDetailScreen(imageFile: file),
-                  ),
-                );
+                context.push(RouterPaths.photoDetail, extra: file);
               }
             }
           },

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
-import 'package:presentation/pages/person_detail_page.dart';
-import 'package:presentation/providers/person/person_detail_provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:presentation/providers/person/person_provider.dart';
+import 'package:presentation/routes/router_paths.dart';
 import 'package:provider/provider.dart';
 
 class PersonScreen extends StatelessWidget {
@@ -30,15 +29,7 @@ class PersonScreen extends StatelessWidget {
                 final person = people[index];
                 return GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChangeNotifierProvider(
-                          create: (_) => GetIt.I<PersonDetailProvider>(),
-                          child: PersonDetailPage(person: person),
-                        ),
-                      ),
-                    );
+                    context.push(RouterPaths.personDetail, extra: person);
                   },
                   child: Column(
                     children: [
